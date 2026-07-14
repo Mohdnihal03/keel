@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Keel run artifacts (per-project build log, not part of the skill)
+.keel/

@@ -1,0 +1,71 @@
+# Keel
+
+A design skill for AI coding assistants that build landing pages. It does two things no page-generator reliably does at once: it makes the page **look made, not generated**, and it makes the page **correct on first server paint** — no flash, no hydration mismatch, nothing invisible until JavaScript arrives.
+
+The name is the point. A keel is what keeps a hull upright under load. A Keel page holds its shape the moment the server sends it, before a single line of client JS runs.
+
+## Install
+
+```
+/plugin marketplace add Mohdnihal03/keel
+/plugin install keel@keel
+```
+
+Then just describe a landing page. Keel triggers on briefs about landing pages, marketing sites, heroes, redesigns, audits, and hydration bugs.
+
+## Two pillars
+
+**1. Deterministic theming.** Keel doesn't rotate a fixed catalog of named themes — catalogs become recognisable once enough pages ship them. It *computes* a theme from a seed string: same seed → byte-identical OKLCH palette + font pairing, forever; different seeds spread across the whole hue wheel. Distinctive at the ten-thousandth use.
+
+Every emitted colour is **contrast-fitted** (the accent's lightness is nudged deterministically until it clears WCAG floors against both its overlay text and the page) and **gamut-fitted** (chroma is reduced until the colour is actually renderable in sRGB — otherwise the browser silently desaturates it and you ship a colour you never chose). Verified across 1,524 palettes: zero contrast failures, zero gamut violations, checked on the value *as printed into the stylesheet*.
+
+**2. SSR/hydration correctness.** Most real landing pages ship through Next.js, Remix, or SvelteKit — server-rendered then hydrated. Keel treats the server-render as part of the design: the theme is applied before paint, above-the-fold content is visible without JS, slow regions stream behind layout-matched skeletons.
+
+## Usage
+
+| Invocation | What it does |
+| --- | --- |
+| *(default)* | Design or build a new landing page. |
+| `keel audit <target>` | Grade a page against the full 52-gate slop test — visual, structural, and SSR — and return a ranked punch list. Does not edit. |
+| `keel hydrate <target> [--fix]` | Grade a framework page against the SSR/hydration gates and, with `--fix`, correct them in place. |
+| `keel redesign <target> [--anchor <name>] [--seed <string>]` | Keep the content and intent; rebuild the visual structure and recompute the theme. |
+
+## Scope
+
+Keel is for **landing / marketing pages and light auth-adjacent pages** (pricing, gated content). It is **not** for authenticated application UI — dashboards, admin panels, data tables, settings, CRUD. Those are a different discipline, and Keel will decline them rather than make them worse.
+
+## The theming engine
+
+`references/theming-engine.py` is a runnable, dependency-free reference implementation. Run it to generate and verify a palette:
+
+```bash
+python .claude/skills/keel/references/theming-engine.py
+```
+
+It prints the OKLCH ramp, the font pairing, every WCAG contrast ratio, and an explicit sRGB gamut assertion. The prose spec lives in `references/theming-engine.md`; **if the two ever disagree, the file wins.**
+
+## What's inside
+
+```
+.claude/skills/keel/
+├── SKILL.md                    the entry point — flow, disciplines, verbs
+└── references/
+    ├── theming-engine.md/.py   deterministic OKLCH + font engine (runnable)
+    ├── ssr-and-hydration.md    theme-before-paint, streaming, next/font
+    ├── slop-test.md            52 gates, run at handoff
+    ├── color.md                tokens, tinted neutrals, the ≤5% accent rule
+    ├── typography.md           font pools, scales, the ban-list
+    ├── layout-and-structure.md macrostructures, off-axis composition
+    ├── motion.md               transform/opacity only, reduced-motion
+    ├── copywriting.md          honest copy — never invent a metric
+    ├── accessibility.md        8 states, focus, contrast floors
+    ├── anti-patterns.md        the banned visual signatures
+    ├── media-and-performance.md LCP, CLS, image formats
+    ├── worked-example.md       one brief, end to end, real code
+    ├── components/             nav / hero / CTA / footer specs
+    └── verbs/                  audit · hydrate · redesign
+```
+
+## License
+
+MIT — see [LICENSE](LICENSE).

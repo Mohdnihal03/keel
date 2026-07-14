@@ -1,0 +1,27 @@
+{
+  "name": "keel",
+  "description": "Anti-AI-slop design skill for landing and marketing pages that must look made, not generated, AND be correct on first server paint. Computes a distinctive theme deterministically from a seed (reproducible OKLCH palette + constraint-filtered font pairing) instead of rotating a recognisable catalog, and prevents the failures a visual review misses — dark-mode flash, hydration mismatches, hidden-until-JS heroes, and layout-shifting loading states. For Next.js, Remix/React Router, SvelteKit, and Astro.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Mohdnihal03",
+    "url": "https://github.com/Mohdnihal03"
+  },
+  "homepage": "https://github.com/Mohdnihal03/keel",
+  "repository": "https://github.com/Mohdnihal03/keel",
+  "license": "MIT",
+  "keywords": [
+    "landing-page",
+    "marketing-site",
+    "design",
+    "ssr",
+    "hydration",
+    "nextjs",
+    "sveltekit",
+    "astro",
+    "oklch",
+    "typography",
+    "accessibility"
+  ],
+  "category": "design",
+  "strict": false
+}

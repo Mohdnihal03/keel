@@ -1,0 +1,38 @@
+{
+  "name": "keel",
+  "id": "keel",
+  "owner": {
+    "name": "Mohdnihal03",
+    "url": "https://github.com/Mohdnihal03"
+  },
+  "metadata": {
+    "description": "Keel — anti-AI-slop landing page design with deterministic OKLCH theming and SSR correctness gates",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "keel",
+      "source": "./",
+      "description": "Design skill for landing and marketing pages. Computes a distinctive theme deterministically from a seed (OKLCH palette + font pairing, gamut- and contrast-fitted), and enforces SSR/hydration correctness — no dark-mode flash, no hydration mismatch, nothing invisible until JavaScript arrives. Verbs: audit, hydrate, redesign.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Mohdnihal03"
+      },
+      "homepage": "https://github.com/Mohdnihal03/keel",
+      "license": "MIT",
+      "keywords": [
+        "landing-page",
+        "marketing-site",
+        "design",
+        "ssr",
+        "hydration",
+        "nextjs",
+        "oklch",
+        "typography",
+        "accessibility"
+      ],
+      "category": "design",
+      "strict": false
+    }
+  ]
+}
