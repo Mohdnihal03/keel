@@ -53,7 +53,8 @@ Anything that doesn't map to a verb is default. Attach nothing special — Keel 
 4. **Structural variety.** Two Keel pages for two briefs must not share the hero→3-features→CTA→footer rhythm. Pick a different macrostructure each build; the diversification rule ([`.keel/log.json`](#25-project-memory)) enforces it. See [`layout-and-structure.md`](references/layout-and-structure.md).
 5. **Roman headers, one accent, tinted neutrals, ≤3 fonts.** The non-negotiable visual floor. Italic display type, gradient text, purple→blue gradients, zero-chroma greys, and >5% accent footprint are banned. See [`anti-patterns.md`](references/anti-patterns.md).
 6. **Motion is cut before it's added, and never load-bearing.** `transform`/`opacity` only, three named easings, reduced-motion fallback on every keyframe, focus rings instant. Entrance animations are additive — content is visible without them. See [`motion.md`](references/motion.md).
-7. **Accessible by construction.** Visible `:focus-visible`, 8 interactive states, contrast floors met, semantic landmarks, alt text. See [`accessibility.md`](references/accessibility.md).
+7. **Refusal is half the skill; the other half is what you build.** A page can pass every gate in this skill and still be empty, because passing means avoiding the bad thing, not making a good one. Every build decides its hero enrichment explicitly (Step 4.5) — and when the answer is "build something," it is **hand-built**: CSS art or inline SVG, in the first byte, correct with JS off. Custom-build is both the tasteful path and the only one that survives first paint. See [`hero-enrichment.md`](references/hero-enrichment.md), [`custom-craft.md`](references/custom-craft.md).
+8. **Accessible by construction.** Visible `:focus-visible`, 8 interactive states, contrast floors met, semantic landmarks, alt text. See [`accessibility.md`](references/accessibility.md).
 
 ## Design flow (default)
 
@@ -77,9 +78,17 @@ Run the [theming engine](references/theming-engine.md): seed = the brand/product
 ### 4. Detect the SSR target
 Name the stack and its consequences out loud: *"Next App Router + dark mode → I'll add the blocking theme script, load fonts via next/font, and stream the live panel behind a Suspense skeleton."* This is where the two pillars meet — a computed dark theme is exactly what must survive first paint. Load [`ssr-and-hydration.md`](references/ssr-and-hydration.md) for any framework build.
 
+### 4.5 Decide the hero enrichment — **every build, on purpose**
+Load [`hero-enrichment.md`](references/hero-enrichment.md) and decide what the hero *builds*. Every other step in this flow tells you what to avoid; this is the one that asks what to make. Pick **zero or one** enrichment archetype and **zero or one** polish pattern, then state the pick in one line — *including when the pick is "none"*.
+
+The default is typography-only, and it is a good default: it is the strongest fail-state on the web. But it is also the answer that passes every gate by building nothing, which makes it the answer a model drifts into on every brief — and eight Keel pages that all drift there are eight pages with one composition. **Not enriching is a decision. Make it, don't default into it.** The gate is [`hero-enrichment.md`](references/hero-enrichment.md) § The gate: if the enrichment doesn't communicate something the typography can't, or the hero collapses without it, ship the typographic hero — deliberately.
+
+Keel's tier order is not a taste ranking; it falls out of the SSR gates. Hand-built CSS art and inline SVG are in the first byte and render with JS off; Lottie, WebGL, and JS-driven canvas are an empty box until a payload lands, which is gate 35 wearing a different costume. So above the fold they are **refused**, not merely discouraged. When enrichment is earned, build it — [`custom-craft.md`](references/custom-craft.md).
+
 ### 5. Load the visual ruleset (index-then-pick; don't over-load)
-- **Every build:** [`color.md`](references/color.md), [`typography.md`](references/typography.md), [`layout-and-structure.md`](references/layout-and-structure.md), [`motion.md`](references/motion.md), [`copywriting.md`](references/copywriting.md), [`anti-patterns.md`](references/anti-patterns.md).
+- **Every build:** [`color.md`](references/color.md), [`typography.md`](references/typography.md), [`layout-and-structure.md`](references/layout-and-structure.md), [`motion.md`](references/motion.md), [`copywriting.md`](references/copywriting.md), [`anti-patterns.md`](references/anti-patterns.md), [`hero-enrichment.md`](references/hero-enrichment.md) (Step 4.5).
 - **Structure picks (Step 2):** the [`component-specs.md`](references/component-specs.md) index, then **only** the nav/hero/CTA/footer spec files you picked from [`components/`](references/components/).
+- **Enrichment at Tier A/B (Step 4.5):** add [`custom-craft.md`](references/custom-craft.md) — CSS-art and inline-SVG recipes. Skip it when the pick is typography-only.
 - **Framework build:** add [`ssr-and-hydration.md`](references/ssr-and-hydration.md).
 - **Image/video-bearing brief:** add [`media-and-performance.md`](references/media-and-performance.md) — LCP, CLS, `next/image`, formats, placeholder honesty.
 - **Any interactive/stateful UI:** add [`accessibility.md`](references/accessibility.md) (states + focus + forms).
@@ -95,7 +104,7 @@ Emit code that satisfies the tone and the structural fingerprint. Always:
 - Design every interactive element for its 8 states; `transform`/`opacity` motion only; reduced-motion fallback; instant focus ring.
 - On a framework: server components by default, `'use client'` on leaves only; blocking theme script; `next/font` wired to `--font-*`; `<Suspense>` + layout-matched skeleton for slow regions.
 - **Never clobber an existing global stylesheet** — append Keel's `:root` + rules below the framework's directives; keep `@tailwind`/`@import "tailwindcss"` in place.
-- **Stamp the output** — first CSS line: `/* Keel · seed:"…" · anchor:… · genre:… · hue:… · fonts:… · contrast:fitted,all-pass · gamut:sRGB-fit · ssr:<stack> */`.
+- **Stamp the output** — first CSS line: `/* Keel · seed:"…" · anchor:… · genre:… · hue:… · fonts:… · contrast:fitted,all-pass · gamut:sRGB-fit · ssr:<stack> */`, then the enrichment line: `/* enrichment:<archetype|none> · craft:<tier|—> · polish:<pattern|none> · first-byte:yes · js-off:renders */`. Write the line even when the answer is `none` — an absent line reads as an oversight, and Step 4.5 exists so that "no enrichment" is a decision on the record rather than a default no one made.
 - **Any colour you hand-author** (a hover shade, a dark-mode accent) must be gamut-fit into sRGB like the engine's own tokens — slop-test gate 52. An out-of-gamut `oklch()` is silently repainted by the browser, and a contrast check won't catch it.
 - **Append to `.keel/log.json`** — `{date, macrostructure, seed, anchor, hue, ssr}` at the front; trim to 20.
 

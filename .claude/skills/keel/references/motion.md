@@ -162,6 +162,44 @@ const variants = reduce
 
 See [ssr-and-hydration.md](ssr-and-hydration.md) for the general rule: server paint must be correct and complete before any JS runs.
 
+## Recipes — the motion a landing page actually needs
+
+The canon above says *how* to move. This says *what* to build. Keep to this list: these are the interactions a marketing page has, and Keel caps the page at ~3 primitives, so you will use two or three of them, not six.
+
+App-UI recipes — drag handles, command palettes, search-as-you-type, form validation, optimistic rollback — are deliberately absent. That is dashboard work, and Keel declines dashboards (SKILL.md § Scope).
+
+**CTA hover.** `transform: translateY(-1.5px)` plus a background shift to `--color-accent-2`. `--dur-base`, `--ease-out`. Press at `--dur-fast`. One signal only — never translate *and* scale *and* shadow *and* recolour at once.
+
+**Copy-to-clipboard.** The label swaps to "Copied" and reverts after ~2.5s. **No toast** — the label change *is* the feedback. Reserve the width of both labels so the swap can't shift the layout, exactly as the theme toggle reserves `min-width`.
+
+**Number tick.** Only on a stat-led hero, only on a real figure. Count from 0 to the value over ≤ 1.2s, `--ease-out` applied to the *value*, not the element. **Must be SSR-safe:** the final number is what the server renders. The tick starts from it on mount; it does not start from an empty span, or the stat is invisible without JS (gate 35). Announce the final value with `aria-live="polite"`, not every tick.
+
+**Marquee / logo strip.** `transform: translateX()` over 40–60s, infinite, pausing on hover *and* focus. Reduced-motion stops the scroll and shows the first few items — a static, complete row, not a frozen half-scrolled one.
+
+**Below-the-fold section reveal.** One orchestrated entrance, staggered by DOM order, capped ~500ms total, **one-shot** — it never re-fires on scroll. Above the fold: nothing. That content ships visible (gate 35). Prefer `animation-timeline: view()` behind an `@supports`, which needs no JS at all; an IntersectionObserver is the fallback, never a scroll listener.
+
+**Theme change.** `document.startViewTransition()` when available, guarded on reduced-motion, falling back to a plain DOM mutation. The browser does the crossfade; you ship no animation library.
+
+## The named tells
+
+The motion signatures of generated code. Gates 20–25 check for these; treat any one as a finding.
+
+1. **`transition: all` / `transition-all`.** Sweeps properties that must be instant — including the focus ring. Name your properties.
+2. **Universal `hover:scale-105`.** Every card lifting, no easing, no shadow change, no purpose. The reflexive "make it interactive" gesture.
+3. **Stacked hover effects.** One element that translates *and* scales *and* shadows *and* recolours. Pick one signal.
+4. **Bounce/overshoot on UI state.** `cubic-bezier(.34, 1.56, .64, 1)` on a button or modal. Dated, and it reads as a toy. Overshoot is for genuine physical drag only.
+5. **The browser default `ease`.** The "I didn't choose an easing" signal.
+6. **Scroll-fade-everything.** Every section fading up on intersection; the page never settles. One orchestrated entrance, then let the page *be there*.
+7. **Reveals that re-fire.** Content re-animating each time it scrolls back into view. One-shot, always.
+8. **Animated focus rings.** A ring that fades in over 200ms is a ring that isn't there when the keyboard user needs it. Instant. Always.
+9. **Colour-only state change.** Error signalled by red alone — fails WCAG 1.4.1 and is invisible to roughly 8% of men. Pair colour with an icon, text, or a border change.
+10. **Celebratory success toasts.** "Done!" for a thing the user can plainly see worked. Silent success is taste. Toasts are for failures and for effects the user can't see.
+11. **Confirmation dialogs for reversible actions.** Replace with optimistic apply + Undo.
+12. **Spinners with no minimum visible time.** A spinner that flashes for 80ms is worse than no spinner. Delay showing it ~150ms, or hold it ~300ms once shown.
+13. **Cursor followers and parallax.** Trailing dots, layers moving at different speeds. Vestibular triggers that communicate nothing.
+14. **Hover-only affordances.** A `:hover` state with no `:focus-visible` equivalent is unreachable by keyboard and by touch.
+15. **Animating layout properties.** `width`, `height`, `top`, `margin` — reflow every frame. `transform` and `opacity` only.
+
 ## Do / Don't
 
 - **Do** animate `transform` and `opacity` only; name the properties explicitly.

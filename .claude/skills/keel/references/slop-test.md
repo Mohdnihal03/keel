@@ -2,7 +2,9 @@
 
 Run this before handing back any output. Every gate is a yes/no; **every answer must be "no."** If any answer is "yes," fix it and re-run. The gates map to named tells in [anti-patterns.md](anti-patterns.md) — this file is the checklist, that file is the reasoning.
 
-The list is deliberately shorter than a big catalog's: Keel prevents whole gate-families by construction (the [theming engine](theming-engine.md) can't emit a failing-contrast accent, a zero-chroma neutral, or a banned font, so those need one confirming gate, not ten). What Keel *adds* is the **SSR & hydration** block (gates 34–43) — the failures a visual-only review never catches.
+The list is deliberately shorter than a big catalog's: Keel prevents whole gate-families by construction (the [theming engine](theming-engine.md) can't emit a failing-contrast accent, a zero-chroma neutral, or a banned font, so those need one confirming gate, not ten). What Keel *adds* is two blocks no visual-only review catches: **SSR & hydration** (gates 34–43), the failures that only appear on a real server render; and **craft & enrichment** (gates 53–58), the failure that appears when a page passes everything else and still says nothing.
+
+Gates 53–58 are the only ones on this list that can fail an *empty* page. Every other gate is satisfiable by building less. Those six are satisfiable only by building something — which is the point: refusal is half of this skill, and a checklist made entirely of refusals grades a blank page as perfect.
 
 Genre note: a few gates loosen by genre (`atmospheric` allows one accent-tinted radial; `technical`/modern-minimal allows pure-white paper and zero-chroma neutrals). Where a gate has no genre note, it is universal.
 
@@ -116,6 +118,17 @@ See [media-and-performance.md](media-and-performance.md). Skip trivially on a ty
 
 52. **Out-of-gamut colour.** Is any `oklch()` value in the stylesheet outside the sRGB gamut — so the browser silently desaturates it and paints a colour you never chose? This bites **hand-authored** tokens hardest: a hover shade (`--color-accent-2`), a dark-mode accent, or a focus ring written by nudging chroma up. The theming engine gamut-fits everything it emits; anything you add by hand is *not* covered. Check with `fit_gamut()` in [`theming-engine.py`](theming-engine.py), or in DevTools — an out-of-gamut `oklch()` renders visibly flatter than its chroma value implies. Note that a contrast check will **not** catch this: contrast maths clamps RGB, so an unrenderable colour can still "pass" 4.5:1 on a colour that never reaches the screen.
 
+## Craft & enrichment
+
+**Every other block on this list asks whether the page avoided the bad thing. This one asks whether it made a good one** — the failure an anti-pattern checklist structurally cannot see, because an empty page passes it. A page can score a clean sheet on gates 1–52 and still be type on tinted paper that communicates nothing. See [`hero-enrichment.md`](hero-enrichment.md), [`custom-craft.md`](custom-craft.md).
+
+53. **Undeclared enrichment.** Is the enrichment line missing from the CSS stamp (`enrichment: … · craft: … · polish: …`)? An absent line means nobody decided — and "typography-only" must be a *stated* decision (`enrichment: none`), not a default the build drifted into. *(SKILL.md Step 4.5.)*
+54. **Bare hero that should have shown something.** Does the page argue for a **mechanism, an output, or a thing it makes** — and then never show it, when it could have been drawn at Tier A/B from real values? This is the "passes every gate, communicates nothing" failure. A page whose whole claim is that its engine produces beautiful output, and which never shows the output, has failed the claim, not the checklist. *(Not triggered for editorial / manifesto / letter briefs, where display type genuinely is the design.)*
+55. **Enrichment as a crutch.** Delete the enrichment: does the hero **collapse**? If the typography can't stand without the illustration, the typography is too weak — fix that first. Enrichment is additive or it isn't earned. *(Inverse of gate 54; both can't be true, and a page can fail either.)*
+56. **Tier-X above the fold.** Is a Lottie player, a WebGL/Three.js canvas, or any JS-driven canvas the hero centrepiece? It renders an **empty box** until a payload downloads and a runtime boots — the same failure as gate 35, in a different costume. Refused above the fold; admissible below it only when the region is content-complete without it.
+57. **Illustration that depends on its own animation.** Is any hand-built illustration's *base* state incomplete — a `stroke-dasharray: 0 …` undrawn line, an `opacity: 0` shape, a `scaleX(0)` bar — so that it is blank or half-drawn if the animation doesn't run? The static state must be the **finished drawing**; the animation is how you arrive at it, never what makes it exist. Check the reduced-motion state actually *looks finished*, not merely "not moving." *(Extends gate 24 from text to artwork.)*
+58. **Hardcoded colour inside artwork.** Does a CSS-art or inline-SVG illustration carry a raw `#hex` / `oklch()` / `fill="…"` literal instead of referencing a token? It can't be re-themed and it will not follow the palette into dark mode. *(Gate 15, applied to drawings.)*
+
 ---
 
-Record the SSR result in the stamp: `· ssr: pass (34–43)`; media if applicable: `· media: pass (48–51)`. If any gate is "yes," fix before shipping. **Do not ship slop.**
+Record the SSR result in the stamp: `· ssr: pass (34–43)`; media if applicable: `· media: pass (48–51)`; craft always: `· craft: pass (53–58)`. If any gate is "yes," fix before shipping. **Do not ship slop.**

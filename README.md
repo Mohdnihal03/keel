@@ -26,7 +26,7 @@ Every emitted colour is **contrast-fitted** (the accent's lightness is nudged de
 | Invocation | What it does |
 | --- | --- |
 | *(default)* | Design or build a new landing page. |
-| `keel audit <target>` | Grade a page against the full 52-gate slop test — visual, structural, and SSR — and return a ranked punch list. Does not edit. |
+| `keel audit <target>` | Grade a page against the full 58-gate slop test — visual, structural, SSR, and craft — and return a ranked punch list. Does not edit. |
 | `keel hydrate <target> [--fix]` | Grade a framework page against the SSR/hydration gates and, with `--fix`, correct them in place. |
 | `keel redesign <target> [--anchor <name>] [--seed <string>]` | Keep the content and intent; rebuild the visual structure and recompute the theme. |
 
@@ -52,11 +52,13 @@ It prints the OKLCH ramp, the font pairing, every WCAG contrast ratio, and an ex
 └── references/
     ├── theming-engine.md/.py   deterministic OKLCH + font engine (runnable)
     ├── ssr-and-hydration.md    theme-before-paint, streaming, next/font
-    ├── slop-test.md            52 gates, run at handoff
+    ├── slop-test.md            58 gates, run at handoff
     ├── color.md                tokens, tinted neutrals, the ≤5% accent rule
     ├── typography.md           font pools, scales, the ban-list
     ├── layout-and-structure.md macrostructures, off-axis composition
-    ├── motion.md               transform/opacity only, reduced-motion
+    ├── hero-enrichment.md      what to BUILD — tiers, archetypes, the gate
+    ├── custom-craft.md         hand-built CSS art & inline SVG recipes
+    ├── motion.md               transform/opacity only, reduced-motion, the named tells
     ├── copywriting.md          honest copy — never invent a metric
     ├── accessibility.md        8 states, focus, contrast floors
     ├── anti-patterns.md        the banned visual signatures
@@ -66,6 +68,18 @@ It prints the OKLCH ramp, the font pairing, every WCAG contrast ratio, and an ex
     └── verbs/                  audit · hydrate · redesign
 ```
 
+## Refusal is only half of it
+
+A design skill made entirely of prohibitions has a failure mode: a page can pass every gate and still be empty, because passing means *avoiding* the bad thing, not making a good one. Strip out everything Keel forbids and what's left is type on tinted paper — a fine look, but only one look, which is exactly what a skill claiming to never settle into one recognisable look cannot have.
+
+So Keel also says yes. [`hero-enrichment.md`](.claude/skills/keel/references/hero-enrichment.md) forces every build to decide what its hero actually *builds* — including when the answer is "nothing," which then has to be a decision rather than a drift. [`custom-craft.md`](.claude/skills/keel/references/custom-craft.md) is how to hand-build it. Gates 53–58 are the only ones on the slop test that an **empty page can fail**; every other gate is satisfiable by building less.
+
+The tier order falls out of the SSR gates rather than out of taste. CSS art and inline SVG ship in the first byte and render with JavaScript off. A Lottie or WebGL hero is an empty box until a payload downloads and a runtime boots — the same failure as an `opacity: 0` headline, wearing a different costume. The tasteful path and the correct-on-first-paint path turn out to be the same path.
+
+## Credits
+
+`hero-enrichment.md`, `custom-craft.md`, and the named-tells section of `motion.md` are adapted from [Hallmark](https://github.com/nutlope/hallmark) (MIT) — a design skill carrying the craft library Keel was missing. The material is re-derived against Keel's SSR gates and anti-pattern set rather than copied: the tier inversion, the base-is-drawn rule, and the constraints on fake chrome, italic numerals, and gradients are Keel's own.
+
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT — see [LICENSE](LICENSE). Portions adapted from [Hallmark](https://github.com/nutlope/hallmark), Copyright (c) 2026 Hallmark contributors, MIT.
